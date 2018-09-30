@@ -1,11 +1,9 @@
-//
-
 const loadShader = (gl, type, src) => {
     const shader = gl.createShader(type);
     gl.shaderSource(shader, src);
     gl.compileShader(shader);
 
-    if (!gl.getShaderParamter(shader, gl.COMPILE_STATUS)) {
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
         console.error(`Cannot load a shader ${gl.getShaderInfoLog(shader)}`);
         gl.deleteShader(shader);
         return null;

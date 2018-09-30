@@ -1,10 +1,8 @@
 const frag = `
-    precision mediump float;
-
-    uniform vec4 uColor;
+    varying mediump vec4 vColor;
     
     void main() {
-        gl_FragColor = uColor;
+        gl_FragColor = vColor;
     }
 `;
 
