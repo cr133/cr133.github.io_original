@@ -5,8 +5,6 @@ import { resizeCanvas } from './util';
 import * as glm from './lib/gl-matrix';
 
 const canvas = document.createElement('canvas');
-canvas.style.width = '100vw';
-canvas.style.height = '100vh';
 document.body.appendChild(canvas);
 export const gl = canvas.getContext('webgl');
 
@@ -85,7 +83,7 @@ function Main() {
 
 function drawScene(programInfo, deltaTime) {
     // Clear background
-    resizeCanvas(canvas);
+    resizeCanvas(gl.canvas);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
     gl.clearColor(0.1647, 0.1647, 0.1647, 1.0);

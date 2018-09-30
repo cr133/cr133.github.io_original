@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Main from './gl/gl_main';
+import './index.scss';
 
 Main();
 
