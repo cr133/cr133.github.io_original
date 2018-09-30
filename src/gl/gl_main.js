@@ -7,6 +7,7 @@ import * as glm from './lib/gl-matrix';
 let rotate_value = 0.0;
 
 export function Main(gl) {
+    mouse(gl);
     // Create a shader
     const shaderProgram = loadProgram(gl, vert, frag);
 
@@ -73,7 +74,7 @@ export function Main(gl) {
     requestAnimationFrame(render);
 }
 
-const  drawScene = (gl, programInfo, deltaTime) => {
+const drawScene = (gl, programInfo, deltaTime) => {
     // Clear background
     resizeCanvas(gl.canvas);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -129,6 +130,59 @@ const  drawScene = (gl, programInfo, deltaTime) => {
     // rotate animation
     rotate_value += deltaTime;
 }
+
+////////////////////////////////
+const mouse = (gl) => {
+    const circle = {
+        x: Math.floor(window.innerWidth / 2),
+        y: Math.floor(window.innerHeight / 2),
+        r: Math.floor(gl.canvas.clientWidth / 2 * 0.16)
+    };
+    
+    gl.canvas.onmousemove = function(e) {
+        if (getFilledCirclePixels(circle.x, circle.y, e.clientX, e.clientY, circle.r)) {
+            console.log(e.clientX, e.clientY);
+        }
+    }
+}
+
+const getFilledCirclePixels = (x, y, ex, ey, radius) => {
+    let xoff = 0;
+    let yoff = radius;
+    let bal = -radius;
+
+    while (xoff <= yoff) {
+        let p0 = x - xoff;
+        let p1 = x - yoff;
+
+        let w0 = xoff * 2;
+        let w1 = yoff * 2;
+
+        if(line(p0, y + yoff, ex, ey, w0))
+            return true;
+        if(line(p0, y - yoff, ex, ey, w0))
+            return true;
+        if(line(p1, y + xoff, ex, ey, w1))
+            return true;
+        if(line(p1, y - xoff, ex, ey, w1))
+            return true;
+
+        if ((bal += xoff++ + xoff) >= 0)
+            bal -= --yoff + yoff;
+    }
+    return false;
+}
+
+const line = (x, y, ex, ey, w) => {
+    for (let i = 0; i < w; i++) {
+        if (x + i === ex && y === ey)
+            return true;
+    }
+    return false;
+}
+
+
+//////////////////////////////////
 
 const loadProgram = (gl, vert, frag) => {
     const vsrc = loadShader(gl, gl.VERTEX_SHADER, vert);
