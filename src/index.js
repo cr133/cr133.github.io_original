@@ -1,11 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Main from './gl/gl_main';
+import App from './App';
 import './index.scss';
 
-Main();
-
 ReactDOM.render(
-    <h1>WebGL in React</h1>,
+    <App />,
     document.getElementById('root')
 )

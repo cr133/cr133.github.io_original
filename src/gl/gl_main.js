@@ -1,20 +1,12 @@
+import React from 'react';
 import vert from './vert';
 import frag from './frag';
-import loadProgram from './loadShader';
 import { resizeCanvas } from './util';
 import * as glm from './lib/gl-matrix';
 
-const canvas = document.createElement('canvas');
-document.body.appendChild(canvas);
-export const gl = canvas.getContext('webgl');
-
-if (!gl) {
-    alert('Your browser does not support WebGL');
-}
-
 let rotate_value = 0.0;
 
-function Main() {
+export function Main(gl) {
     // Create a shader
     const shaderProgram = loadProgram(gl, vert, frag);
 
@@ -74,14 +66,14 @@ function Main() {
         const deltaTime = now - then;
         then = now;
 
-        drawScene(programInfo, deltaTime);
+        drawScene(gl, programInfo, deltaTime);
 
         requestAnimationFrame(render);
     } 
     requestAnimationFrame(render);
 }
 
-function drawScene(programInfo, deltaTime) {
+const  drawScene = (gl, programInfo, deltaTime) => {
     // Clear background
     resizeCanvas(gl.canvas);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
@@ -138,4 +130,58 @@ function drawScene(programInfo, deltaTime) {
     rotate_value += deltaTime;
 }
 
-export default Main;
+const loadProgram = (gl, vert, frag) => {
+    const vsrc = loadShader(gl, gl.VERTEX_SHADER, vert);
+    const fsrc = loadShader(gl, gl.FRAGMENT_SHADER, frag);
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vsrc);
+    gl.attachShader(program, fsrc);
+    gl.linkProgram(program);
+
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error(`Cannot load a program ${gl.getProgramInfoLog(program)}`);
+        gl.deleteProgram(program);
+        return null;
+    }
+    return program;
+}
+
+const loadShader = (gl, type, src) => {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, src);
+    gl.compileShader(shader);
+
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.error(`Cannot load a shader ${gl.getShaderInfoLog(shader)}`);
+        gl.deleteShader(shader);
+        return null;
+    }
+    return shader;
+}
+
+/////////////////////////////////////////////////////////////////////
+//// WebGL End
+/////////////////////////////////////////////////////////////////////
+
+class Canvas extends React.Component {
+    componentDidMount() {
+        this.updateCanvas();
+    }
+    updateCanvas() {
+        const gl = this.refs.canvas.getContext('webgl');
+        if (!gl) {
+            alert('Your browser does not support WebGL');
+        }
+        Main(gl);
+    }
+    render() {
+        return (
+            <div id="canvas-con">
+                <canvas ref="canvas"></canvas>
+            </div>
+        )
+    }
+}
+
+export default Canvas;
