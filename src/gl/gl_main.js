@@ -5,6 +5,8 @@ import { resizeCanvas } from './util';
 import * as glm from './lib/gl-matrix';
 
 let rotate_value = 0.0;
+let shouldRotate = true;
+let scale_value = 1;
 
 export function Main(gl) {
     mouse(gl);
@@ -91,7 +93,7 @@ const drawScene = (gl, programInfo, deltaTime) => {
     let rotate = glm.vec3.create();
     let scale = glm.vec3.create();
 
-    glm.vec3.set(scale, 0.16, 0.16, 1.0);
+    glm.vec3.set(scale, 0.16 * scale_value, 0.16 * scale_value, 1.0);
     
     glm.mat4.scale(modelViewMatrix, modelViewMatrix, scale);
 
@@ -128,6 +130,7 @@ const drawScene = (gl, programInfo, deltaTime) => {
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 360);
 
     // rotate animation
+    if (shouldRotate)
     rotate_value += deltaTime;
 }
 
@@ -141,7 +144,22 @@ const mouse = (gl) => {
     
     gl.canvas.onmousemove = function(e) {
         if (getFilledCirclePixels(circle.x, circle.y, e.clientX, e.clientY, circle.r)) {
-            console.log(e.clientX, e.clientY);
+            // 1. Color change
+            shouldRotate = false;
+            scale_value = 0.95;
+        }
+        else {
+            shouldRotate = true;
+            scale_value = 1;
+        }
+    }
+    
+    gl.canvas.onclick = function(e) {
+        if (getFilledCirclePixels(circle.x, circle.y, e.clientX, e.clientY, circle.r)) {
+            // 1. Scaling the circle
+            // 2. Go to the next page
+            const target = document.getElementById('target');
+            target.style.color = "lightgreen";
         }
     }
 }
