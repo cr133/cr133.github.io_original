@@ -1,5 +1,7 @@
 import React from 'react';
+import About from './About';
 import Canvas, { circle, getFilledCirclePixels } from './gl/gl_main';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 class App extends React.Component {
     constructor(props) {
@@ -33,15 +35,16 @@ class App extends React.Component {
             return (
                 <div id="app" onClick={this.updateValue}>
                     {/* TODO: Replace h1 with a component */}
-                    <h1>Main page</h1>
+                    <h1 id="first-head">Main page</h1>
                     <Canvas />
                 </div>
             )
         } else {
             return (
                 <div id="app" onDoubleClick={this.updateValue}>
-                    {/* TODO: Replace h1 with a component */}
-                    <h1>Next page</h1>
+                    <Router>
+                        <About />
+                    </Router>
                     <Canvas />
                 </div>
             )
